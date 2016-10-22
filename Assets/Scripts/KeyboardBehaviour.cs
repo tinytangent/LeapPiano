@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class KeyboardBehaviour : MonoBehaviour
 {
 
-    public GameObject PitchIntervalTemplate;
+    public GameObject PitchIntervalPrefab;
 
     protected float left;
     protected float right;
@@ -17,14 +17,13 @@ public class KeyboardBehaviour : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            GameObject newObject = Instantiate(PitchIntervalTemplate);
+            GameObject newObject = Instantiate(PitchIntervalPrefab);
             newObject.transform.localPosition = new Vector3(i * 7 * 0.26f, 0, 0);
             //newObject.transform.localScale = new Vector3(0.02f, 0.1f, 0.1f);
             newObject.transform.parent = this.transform;
             newObject.name = "" + i;
             pitchIntervalObjects.Add(newObject);
         }
-        PitchIntervalTemplate.SetActive(false);
         setScale(-10.0f, 10.0f, 4);
     }
 

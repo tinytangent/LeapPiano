@@ -70,8 +70,6 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
                 blackKeyObjects.Add(newObject);
             }
         }
-        WhiteKeyTemplate.SetActive(false);
-        BlackKeyTemplate.SetActive(false);
     }
 
     void UpdateChildren()
