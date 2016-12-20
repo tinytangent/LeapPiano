@@ -1,16 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class KeyboardBehaviour : MonoBehaviour
 {
 
     public GameObject PitchIntervalPrefab;
+    public AudioSource music;
 
     protected float left;
     protected float right;
 
     protected List<GameObject> pitchIntervalObjects = new List<GameObject>();
+
+    protected String[] oldSelectedObject = new String[4];
 
     // Use this for initialization
     void Start()
@@ -49,6 +53,37 @@ public class KeyboardBehaviour : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().SetPressedPositions(positions);
+            if (!pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject.Equals(oldSelectedObject[i]))
+            {
+                oldSelectedObject[i] = pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject;
+                print(i);
+                print(oldSelectedObject[i]);
+                print(pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject);
+                if (!oldSelectedObject[i].Equals(""))
+                {
+                    music.pitch = 1;
+                    int j = 0;
+                    switch (oldSelectedObject[i][0])
+                    {
+                        case 'H': j = 9; break;
+                        case 'I': j = 11; break;
+                        case 'C': j = 0; break;
+                        case 'D': j = 2; break;
+                        case 'E': j = 4; break;
+                        case 'F': j = 5; break;
+                        case 'G': j = 7; break;
+                    }
+                    switch (i)
+                    {
+                        case 0: music.pitch = music.pitch * 0.25f; break;
+                        case 1: music.pitch = music.pitch * 0.5f; break;
+                        case 3: music.pitch = music.pitch * 2; break;
+                    }
+                    for (int k = 0; k < j; ++k)
+                        music.pitch = music.pitch * 1.05946f;
+                    music.Play();
+                }
+            }
         }
     }
 

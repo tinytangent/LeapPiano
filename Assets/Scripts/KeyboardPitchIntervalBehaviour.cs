@@ -25,6 +25,8 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
     protected List<GameObject> whiteKeyObjects = new List<GameObject>();
     protected List<GameObject> blackKeyObjects = new List<GameObject>();
 
+    public String selectedObject = null;
+
     // Use this for initialization
     void Start () {
         Assert.AreNotEqual(WhiteKeyTemplate, null);
@@ -106,11 +108,16 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
             if(positions.Count > 0 && 
                 Math.Abs(positions[0] - whiteKeyObjects[i].transform.position.x) < whiteKeyWidth / 2)
             {
+                selectedObject = whiteKeyObjects[i].name;
                 whiteKeyObjects[i].GetComponent<MeshRenderer>().material = BlackMaterial;
             }
             else
             {
                 whiteKeyObjects[i].GetComponent<MeshRenderer>().material = NormalMaterial;
+            }
+            if (positions.Count == 0)
+            {
+                selectedObject = "";
             }
         }
     }
