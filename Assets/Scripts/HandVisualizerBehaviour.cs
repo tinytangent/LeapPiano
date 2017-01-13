@@ -31,6 +31,7 @@ public class HandVisualizerBehaviour : MonoBehaviour {
                 handTemplate.SetActive(true);
                 handObjects.Add(Instantiate(handTemplate));
                 handObjects[i].transform.parent = this.transform;
+                handObjects[i].transform.localEulerAngles = new Vector3(-45f ,0,0);
                 handTemplate.SetActive(false);
             }
         }

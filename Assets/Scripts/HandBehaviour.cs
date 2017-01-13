@@ -9,6 +9,8 @@ public class HandBehaviour : MonoBehaviour {
 
     public GameObject FingerTemplate;
     public GameObject Keyboard;
+    public GameObject Cam;
+    public GameObject OpenSphere;
     public List<GameObject> fingerObjects = new List<GameObject>();
 
     // Use this for initialization
@@ -31,14 +33,32 @@ public class HandBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        bool havePressedButton = false;
+        int havePressedButton = 0;
         float pressPos = 0.0f;
+        // Show hand
         if (handData != null)
         {
-            transform.localPosition =
-                new Vector3(handData.PalmPosition.x,20.0f, 0) / 20.0f;
+            float z = handData.PalmPosition.z;
+            float deltax = 0f;
+            if (z > 90f)
+                z = 45f;
+            else if (z < 50f)
+                z = 5f;
+            else
+                z = z - 45f;
+            if (handData.IsLeft)
+                deltax = 120f;
+            Vector3 originalVector = new Vector3(handData.PalmPosition.x + deltax, 20.0f, -z) / 20.0f;
+            Vector3 newVector = Quaternion.AngleAxis(45, Vector3.left) * originalVector;
+            transform.localPosition = newVector;
+            // Method 1
+            // transform.localPosition =
+            //    new Vector3(handData.PalmPosition.x+deltax ,20.0f, -z) / 20.0f;
+            // Method 2
+            //transform.position = transform.parent.position + new Vector3(handData.PalmPosition.x + deltax, 20.0f, -z) / 20.0f;
         }
         else return;
+        // Show fingers
         List<Leap.Finger> fingers = handData.Fingers;
         for(int i = 0; i < 5; i++)
         {
@@ -49,9 +69,15 @@ public class HandBehaviour : MonoBehaviour {
                 -(fingers[i].TipPosition.z - handData.PalmPosition.z)
                 );
             fingerObjects[i].transform.localPosition = relativePosition / 20.0f;
-            if(Math.Abs(fingers[i].Direction.Dot(handData.PalmNormal)) > 0.7)
+
+            if (Vector3.Distance(fingerObjects[i].transform.position, OpenSphere.transform.position)
+                < 1)
+                OpenSphere.GetComponent<SphereBehaviour>().countToStart();
+                
+            if(fingers[i].Type == Leap.Finger.FingerType.TYPE_THUMB && Math.Abs(fingers[i].Direction.Dot(handData.PalmNormal)) > 0.4
+                || Math.Abs(fingers[i].Direction.Dot(handData.PalmNormal)) > 0.7)
             {
-                havePressedButton = true;
+                havePressedButton++;
                 pressPos = fingerObjects[i].transform.position.x;
                 fingerObjects[i].transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
             }
@@ -61,10 +87,15 @@ public class HandBehaviour : MonoBehaviour {
             }
         }
         List<float> positions = new List<float>();
-        if(havePressedButton)
+        if(havePressedButton > 4)
+        {
+            Cam.GetComponent<CameraBehaviour>().setAngle(CameraBehaviour.START);
+            Debug.Log("Exit now!!");
+        }
+        else if(havePressedButton > 0)
         {
             positions.Add(pressPos);
         }
-        Keyboard.GetComponent<KeyboardBehaviour>().SetPressedPositions(positions);
+        Keyboard.GetComponent<KeyboardBehaviour>().SetPressedPositions(positions, handData.IsLeft);
     }
 }

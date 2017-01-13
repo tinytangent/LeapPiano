@@ -25,7 +25,8 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
     protected List<GameObject> whiteKeyObjects = new List<GameObject>();
     protected List<GameObject> blackKeyObjects = new List<GameObject>();
 
-    public String selectedObject = null;
+    public String selectedLeftObject = null;
+    public String selectedRightObject = null;
 
     // Use this for initialization
     void Start () {
@@ -91,7 +92,7 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
             float keyCenter = whiteKeyWidth * (1.0f + spacingScale) * (blackKeyPosition[i] + 1) - offset;
             float keyLeft = keyCenter - blackKeyWidth / 2;
             float keyRight = keyCenter + blackKeyWidth / 2;
-            blackKeyObjects[i].transform.localPosition = new Vector3((keyLeft + keyRight) / 2, 0.2f, 0);
+            blackKeyObjects[i].transform.localPosition = new Vector3((keyLeft + keyRight) / 2, 0.2f, 0.3f);
             blackKeyObjects[i].transform.localScale = new Vector3(0.1f * blackKeyWidth, 0.1f, 0.2f);
         }
     }
@@ -101,23 +102,34 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
     
 	}
 
-    public void SetPressedPositions(List<float> positions)
+    public void SetPressedPositions(List<float> positions, bool isLeft)
     {
         for (int i = 0; i < 7; i++)
         {
             if(positions.Count > 0 && 
                 Math.Abs(positions[0] - whiteKeyObjects[i].transform.position.x) < whiteKeyWidth / 2)
             {
-                selectedObject = whiteKeyObjects[i].name;
+                if (isLeft)
+                    selectedLeftObject = whiteKeyObjects[i].name;
+                else
+                    selectedRightObject = whiteKeyObjects[i].name;
                 whiteKeyObjects[i].GetComponent<MeshRenderer>().material = BlackMaterial;
             }
             else
             {
-                whiteKeyObjects[i].GetComponent<MeshRenderer>().material = NormalMaterial;
+                if (isLeft
+                    && selectedRightObject != whiteKeyObjects[i].name)
+                    whiteKeyObjects[i].GetComponent<MeshRenderer>().material = NormalMaterial;
+                if (!isLeft
+                    && selectedLeftObject != whiteKeyObjects[i].name)
+                    whiteKeyObjects[i].GetComponent<MeshRenderer>().material = NormalMaterial;
             }
             if (positions.Count == 0)
             {
-                selectedObject = "";
+                if (isLeft)
+                    selectedLeftObject = "";
+                else
+                    selectedRightObject = "";
             }
         }
     }

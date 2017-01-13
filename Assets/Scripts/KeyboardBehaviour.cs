@@ -5,7 +5,7 @@ using System;
 
 public class KeyboardBehaviour : MonoBehaviour
 {
-
+    public GameObject Cam;
     public GameObject PitchIntervalPrefab;
     public AudioSource music;
 
@@ -14,7 +14,8 @@ public class KeyboardBehaviour : MonoBehaviour
 
     protected List<GameObject> pitchIntervalObjects = new List<GameObject>();
 
-    protected String[] oldSelectedObject = new String[4];
+    protected String[] oldSelectedLeftObject = new String[4];
+    protected String[] oldSelectedRightObject = new String[4];
 
     // Use this for initialization
     void Start()
@@ -48,19 +49,31 @@ public class KeyboardBehaviour : MonoBehaviour
         }
     }
 
-    public void SetPressedPositions(List<float> positions)
+    public void SetPressedPositions(List<float> positions, bool isLeft)
     {
+        if (Cam.GetComponent<CameraBehaviour>().angle == CameraBehaviour.START)
+            return;
+        String[] oldSelectedObject;
+        if (isLeft)
+            oldSelectedObject = oldSelectedLeftObject;
+        else
+            oldSelectedObject = oldSelectedRightObject;
         for (int i = 0; i < 4; i++)
         {
-            pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().SetPressedPositions(positions);
-            if (!pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject.Equals(oldSelectedObject[i]))
+            String pitchSelectedObject;
+            if (isLeft)
+                pitchSelectedObject = pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedLeftObject;
+            else
+                pitchSelectedObject = pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedRightObject;
+            pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().SetPressedPositions(positions, isLeft);
+            if (!pitchSelectedObject.Equals(oldSelectedObject[i]))
             {
-                oldSelectedObject[i] = pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject;
-                print(i);
-                print(oldSelectedObject[i]);
-                print(pitchIntervalObjects[i].GetComponent<KeyboardPitchIntervalBehaviour>().selectedObject);
-                if (!oldSelectedObject[i].Equals(""))
+                //print("Before " + (isLeft ? "Left" : "Right") + ", interval " + i + ", pressed " + pitchSelectedObject + ".");
+                oldSelectedObject[i] = pitchSelectedObject;
+                //print("Now " + (isLeft ? "Left" : "Right") + ", interval " + i + ", pressed " + pitchSelectedObject + ".");
+                if (!pitchSelectedObject.Equals(""))
                 {
+                    print("Now " + (isLeft ? "Left" : "Right") + ", interval " + i + ", pressed " + pitchSelectedObject + ".");
                     music.pitch = 1;
                     int j = 0;
                     switch (oldSelectedObject[i][0])
