@@ -10,6 +10,7 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
     public GameObject BlackKeyTemplate;
     public Material NormalMaterial;
     public Material BlackMaterial;
+    public Material NormalBlackMaterial;
 
     protected float left;
     protected float right;
@@ -102,12 +103,20 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
     
 	}
 
-    public void SetPressedPositions(List<float> positions, bool isLeft)
+    public void SetPressedPositions(List<Vector2> positions, bool isLeft)
     {
+        if (positions.Count == 0)
+        {
+            if (isLeft)
+                selectedLeftObject = "";
+            else
+                selectedRightObject = "";
+        }
+        // White key
         for (int i = 0; i < 7; i++)
         {
-            if(positions.Count > 0 && 
-                Math.Abs(positions[0] - whiteKeyObjects[i].transform.position.x) < whiteKeyWidth / 2)
+            if (positions.Count > 0 && positions[0].y < -1f &&
+                Math.Abs(positions[0].x - whiteKeyObjects[i].transform.position.x) < whiteKeyWidth / 2)
             {
                 if (isLeft)
                     selectedLeftObject = whiteKeyObjects[i].name;
@@ -124,12 +133,27 @@ public class KeyboardPitchIntervalBehaviour : MonoBehaviour {
                     && selectedLeftObject != whiteKeyObjects[i].name)
                     whiteKeyObjects[i].GetComponent<MeshRenderer>().material = NormalMaterial;
             }
-            if (positions.Count == 0)
+        }
+        // Black key
+        for (int i = 0; i < 5; i++)
+        {
+            if (positions.Count > 0 && positions[0].y > -1f &&
+                Math.Abs(positions[0].x - blackKeyObjects[i].transform.position.x) < blackKeyWidth / 2)
             {
                 if (isLeft)
-                    selectedLeftObject = "";
+                    selectedLeftObject = blackKeyObjects[i].name;
                 else
-                    selectedRightObject = "";
+                    selectedRightObject = blackKeyObjects[i].name;
+                blackKeyObjects[i].GetComponent<MeshRenderer>().material = BlackMaterial;
+            }
+            else
+            {
+                if (isLeft
+                    && selectedRightObject != blackKeyObjects[i].name)
+                    blackKeyObjects[i].GetComponent<MeshRenderer>().material = NormalBlackMaterial;
+                if (!isLeft
+                    && selectedLeftObject != blackKeyObjects[i].name)
+                    blackKeyObjects[i].GetComponent<MeshRenderer>().material = NormalBlackMaterial;
             }
         }
     }

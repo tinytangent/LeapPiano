@@ -49,7 +49,7 @@ public class KeyboardBehaviour : MonoBehaviour
         }
     }
 
-    public void SetPressedPositions(List<float> positions, bool isLeft)
+    public void SetPressedPositions(List<Vector2> positions, bool isLeft)
     {
         if (Cam.GetComponent<CameraBehaviour>().angle == CameraBehaviour.START)
             return;
@@ -76,16 +76,26 @@ public class KeyboardBehaviour : MonoBehaviour
                     print("Now " + (isLeft ? "Left" : "Right") + ", interval " + i + ", pressed " + pitchSelectedObject + ".");
                     music.pitch = 1;
                     int j = 0;
-                    switch (oldSelectedObject[i][0])
-                    {
-                        case 'H': j = 9; break;
-                        case 'I': j = 11; break;
-                        case 'C': j = 0; break;
-                        case 'D': j = 2; break;
-                        case 'E': j = 4; break;
-                        case 'F': j = 5; break;
-                        case 'G': j = 7; break;
-                    }
+                    if (oldSelectedObject[i].Length < 2)
+                        switch (oldSelectedObject[i][0])
+                        {
+                            case 'H': j = 9; break;
+                            case 'I': j = 11; break;
+                            case 'C': j = 0; break;
+                            case 'D': j = 2; break;
+                            case 'E': j = 4; break;
+                            case 'F': j = 5; break;
+                            case 'G': j = 7; break;
+                        }
+                    else
+                        switch (oldSelectedObject[i][0])
+                        {
+                            case 'C': j = 1; break;
+                            case 'D': j = 3; break;
+                            case 'F': j = 6; break;
+                            case 'G': j = 8; break;
+                            case 'H': j = 10; break;
+                        }
                     switch (i)
                     {
                         case 0: music.pitch = music.pitch * 0.25f; break;

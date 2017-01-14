@@ -34,7 +34,7 @@ public class HandBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         int havePressedButton = 0;
-        float pressPos = 0.0f;
+        Vector2 pressPos = Vector2.zero;
         // Show hand
         if (handData != null)
         {
@@ -78,7 +78,7 @@ public class HandBehaviour : MonoBehaviour {
                 || Math.Abs(fingers[i].Direction.Dot(handData.PalmNormal)) > 0.7)
             {
                 havePressedButton++;
-                pressPos = fingerObjects[i].transform.position.x;
+                pressPos = new Vector2(fingerObjects[i].transform.position.x, fingerObjects[i].transform.position.z);
                 fingerObjects[i].transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
             }
             else
@@ -86,7 +86,7 @@ public class HandBehaviour : MonoBehaviour {
                 fingerObjects[i].transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             }
         }
-        List<float> positions = new List<float>();
+        List<Vector2> positions = new List<Vector2>();
         if(havePressedButton > 4)
         {
             Cam.GetComponent<CameraBehaviour>().setAngle(CameraBehaviour.START);
