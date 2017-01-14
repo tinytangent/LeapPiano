@@ -87,11 +87,16 @@ public class HandBehaviour : MonoBehaviour {
             }
         }
         List<Vector2> positions = new List<Vector2>();
-        if(havePressedButton > 4)
+
+        // Deciding to exit
+        if((handData.PalmNormal.Dot(Leap.Vector.Left) > 0.8
+            || handData.PalmNormal.Dot(Leap.Vector.Right) > 0.8)
+            && havePressedButton > 3)
         {
             Cam.GetComponent<CameraBehaviour>().setAngle(CameraBehaviour.START);
             Debug.Log("Exit now!!");
         }
+
         else if(havePressedButton > 0)
         {
             positions.Add(pressPos);
