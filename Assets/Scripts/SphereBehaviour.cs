@@ -8,6 +8,8 @@ public class SphereBehaviour : MonoBehaviour {
     public int startCount;
     public static int startMax = 130;
 
+    public int minusStep = 1;
+
 	// Use this for initialization
 	void Start () {
         startCount = 0;
@@ -16,6 +18,11 @@ public class SphereBehaviour : MonoBehaviour {
         //GetComponent<Renderer>().material.shader. .EnableKeyword("_DETAIL_MULX2");
     }
 	
+    public int getStartCount ()
+    {
+        return startCount;
+    }
+
     public void countToStart ()
     {
         startCount++;
@@ -27,11 +34,17 @@ public class SphereBehaviour : MonoBehaviour {
         if (startCount > startMax)
         {
             Cam.GetComponent<CameraBehaviour>().setAngle(CameraBehaviour.PIANO);
-            startCount = 0;
+            minusStep = 5;
+            startCount = startMax;
         } else
         {
-            if (startCount > 0)
-                startCount--;
+            if (startCount < minusStep)
+            {
+                startCount = 0;
+                minusStep = 1;
+            }
+            else
+                startCount -= minusStep;
         }
         //GetComponent<Renderer>().material.color = new Color(255f, 255f-(255*startCount/startMax), 255f, 70f);
 	}
