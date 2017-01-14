@@ -6,7 +6,7 @@ public class SphereBehaviour : MonoBehaviour {
     public GameObject Cam;
 
     public int startCount;
-    public static int startMax = 100;
+    public static int startMax = 130;
 
 	// Use this for initialization
 	void Start () {
